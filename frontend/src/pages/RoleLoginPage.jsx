@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { ArrowLeft, Mail, Lock, User, Users, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, User, Users, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 const ROLE_CONFIG = {
   employee: {
@@ -49,6 +49,7 @@ export default function RoleLoginPage() {
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [accountsLoading, setAccountsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const isValidRole = Boolean(ROLE_CONFIG[role]);
   const config = ROLE_CONFIG[role] || ROLE_CONFIG.employee;
@@ -179,15 +180,25 @@ export default function RoleLoginPage() {
             <label className="text-base sm:text-[17px] font-semibold text-foreground flex items-center gap-2">
               <Lock size={14} /> Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              required
-              autoFocus
-              className="w-full h-13 px-5 rounded-xl bg-background border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+                autoFocus
+                className="w-full h-13 px-5 pr-12 rounded-xl bg-background border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {/* Submit */}
