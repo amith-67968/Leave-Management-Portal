@@ -132,7 +132,7 @@ export default function RoleLoginPage() {
       </header>
 
       {/* Login Card */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-120">
         {/* Role Badge */}
         <div className="text-center mb-6">
           <div className={`inline-flex p-3.5 rounded-2xl bg-primary/10 mb-3`}>
@@ -152,7 +152,7 @@ export default function RoleLoginPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="min-h-[440px] sm:min-h-[470px] bg-card border border-border rounded-3xl p-7 py-8 sm:p-10 sm:py-11 shadow-lg flex flex-col gap-9">
+        <form onSubmit={handleSubmit} className="min-h-110 sm:min-h-117.5 bg-card border border-border rounded-3xl p-7 py-8 sm:p-10 sm:py-11 shadow-lg flex flex-col gap-9">
           {/* Account Selector */}
           <div className="space-y-3">
             <label className="text-base sm:text-[17px] font-semibold text-foreground flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function RoleLoginPage() {
             <select
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-[52px] px-5 rounded-xl bg-background border border-border text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              className="w-full h-13 px-5 rounded-xl bg-background border border-border text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
             >
               {accounts.map((u) => (
                 <option key={u.email} value={u.email}>
@@ -186,7 +186,7 @@ export default function RoleLoginPage() {
               placeholder="Enter password"
               required
               autoFocus
-              className="w-full h-[52px] px-5 rounded-xl bg-background border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              className="w-full h-13 px-5 rounded-xl bg-background border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
             />
           </div>
 
@@ -195,7 +195,7 @@ export default function RoleLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-[52px] rounded-2xl bg-[#C79B73] text-[#3F2818] text-base font-semibold tracking-wide shadow-sm transition-colors hover:bg-[#B9865E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C79B73]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full h-13 rounded-2xl bg-[#C79B73] text-[#3F2818] text-base font-semibold tracking-wide shadow-sm transition-colors hover:bg-[#B9865E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C79B73]/40 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Signing in...' : `Sign In as ${config.label}`}
             </button>
