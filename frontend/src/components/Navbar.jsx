@@ -1,36 +1,17 @@
-import { useAuth } from '../context/AuthContext';
-import { HiOutlineLogout } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { Shield } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
-
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          Welcome back 👋
-        </span>
-      </div>
-      <div className="navbar-right">
-        <div className="navbar-user">
-          <div className="navbar-avatar">{initials}</div>
-          <div className="navbar-user-info">
-            <span className="navbar-user-name">{user?.name}</span>
-            <span className="navbar-user-role">{user?.role}</span>
+    <nav className="fixed top-0 w-full z-50 h-16 glass-nav">
+      <div className="w-full h-full px-6 md:px-10 flex items-center">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 rounded-md bg-primary flex items-center justify-center">
+            <Shield size={20} className="text-primary-foreground" />
           </div>
+          <span className="font-bold text-lg tracking-tight text-foreground">
+            LeaveFlow
+          </span>
         </div>
-        <button className="btn btn-ghost btn-sm" onClick={handleLogout} title="Logout">
-          <HiOutlineLogout size={18} /> Logout
-        </button>
       </div>
     </nav>
   );
