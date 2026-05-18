@@ -1,5 +1,5 @@
 /**
- * Seed script — creates demo data with properly hashed passwords.
+ * Seed script - creates demo data with properly hashed passwords.
  * Run: npm run seed
  */
 require('dotenv').config();
@@ -17,33 +17,46 @@ const USERS = [
   { id: 'c0000000-0000-0000-0000-000000000005', name: 'Arjun Das', email: 'arjun.das@company.com', password: 'employee123', role: 'employee', joining_date: '2024-01-08', monthly_salary: 50000, manager_id: 'b0000000-0000-0000-0000-000000000002' },
 ];
 
+function printDatabaseSetupHelp(error) {
+  if (error.code === 'ENOTFOUND') {
+    console.error(`Database host not found: ${error.hostname}`);
+    console.error('Update DATABASE_URL in backend/.env with the current Supabase connection string.');
+    console.error('Use Supabase Dashboard > Settings > Database > Connection string > URI.');
+    console.error('The pooler URL usually looks like:');
+    console.error('postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres');
+    return;
+  }
+
+  console.error('Seed failed:', error.message);
+}
+
 async function seed() {
-  const client = await pool.connect();
+  let client;
+
   try {
-    console.log('🌱 Starting seed...');
+    client = await pool.connect();
+    console.log('Starting seed...');
     await client.query('BEGIN');
 
-    // Insert users with hashed passwords
-    for (const u of USERS) {
-      const hash = await bcrypt.hash(u.password, 10);
+    for (const user of USERS) {
+      const hash = await bcrypt.hash(user.password, 10);
       await client.query(
         `INSERT INTO users (id, name, email, password_hash, role, joining_date, monthly_salary, manager_id)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (id) DO UPDATE SET password_hash = $4`,
-        [u.id, u.name, u.email, hash, u.role, u.joining_date, u.monthly_salary, u.manager_id]
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         ON CONFLICT (id) DO UPDATE SET password_hash = $4`,
+        [user.id, user.name, user.email, hash, user.role, user.joining_date, user.monthly_salary, user.manager_id]
       );
     }
-    console.log('✅ Users seeded');
+    console.log('Users seeded');
 
-    // Leave types
     await client.query(`INSERT INTO leave_types (id,name,annual_quota,carry_forward_max,is_paid,description) VALUES
       ('d0000000-0000-0000-0000-000000000001','Casual Leave',12,3,TRUE,'Personal or short breaks'),
       ('d0000000-0000-0000-0000-000000000002','Sick Leave',10,0,TRUE,'Illness or medical'),
       ('d0000000-0000-0000-0000-000000000003','Earned Leave',15,5,TRUE,'Privileged, carry-forward'),
       ('d0000000-0000-0000-0000-000000000004','Loss of Pay',0,0,FALSE,'Unpaid leave')
       ON CONFLICT (id) DO NOTHING`);
-    console.log('✅ Leave types seeded');
+    console.log('Leave types seeded');
 
-    // Holidays
     await client.query(`INSERT INTO holidays (date, name, is_optional) VALUES
       ('2026-01-26','Republic Day',FALSE),('2026-03-17','Holi',FALSE),
       ('2026-04-03','Good Friday',FALSE),('2026-04-20','Eid ul-Fitr',FALSE),
@@ -53,30 +66,36 @@ async function seed() {
       ('2026-11-19','Guru Nanak Jayanti',FALSE),('2026-12-25','Christmas',FALSE),
       ('2026-01-14','Pongal',TRUE),('2026-06-27','Eid ul-Adha',TRUE)
       ON CONFLICT (date) DO NOTHING`);
-    console.log('✅ Holidays seeded');
+    console.log('Holidays seeded');
 
-    // Leave balances for all non-admin users
-    const leaveTypeIds = ['d0000000-0000-0000-0000-000000000001','d0000000-0000-0000-0000-000000000002','d0000000-0000-0000-0000-000000000003'];
+    const leaveTypeIds = [
+      'd0000000-0000-0000-0000-000000000001',
+      'd0000000-0000-0000-0000-000000000002',
+      'd0000000-0000-0000-0000-000000000003',
+    ];
     const quotas = [12, 10, 15];
-    const nonAdmin = USERS.filter(u => u.role !== 'admin');
-    for (const u of nonAdmin) {
+    const nonAdminUsers = USERS.filter((user) => user.role !== 'admin');
+
+    for (const user of nonAdminUsers) {
       for (let i = 0; i < leaveTypeIds.length; i++) {
         await client.query(
           `INSERT INTO leave_balances (user_id, leave_type_id, year, allocated, used, remaining)
-           VALUES ($1,$2,2026,$3,0,$3) ON CONFLICT ON CONSTRAINT uq_leave_balance DO NOTHING`,
-          [u.id, leaveTypeIds[i], quotas[i]]
+           VALUES ($1,$2,2026,$3,0,$3)
+           ON CONFLICT ON CONSTRAINT uq_leave_balance DO NOTHING`,
+          [user.id, leaveTypeIds[i], quotas[i]]
         );
       }
     }
-    console.log('✅ Leave balances seeded');
+    console.log('Leave balances seeded');
 
     await client.query('COMMIT');
-    console.log('🎉 Seed complete!');
+    console.log('Seed complete!');
   } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('❌ Seed failed:', error);
+    if (client) await client.query('ROLLBACK');
+    printDatabaseSetupHelp(error);
+    process.exitCode = 1;
   } finally {
-    client.release();
+    if (client) client.release();
     await pool.end();
   }
 }
