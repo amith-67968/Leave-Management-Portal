@@ -9,7 +9,7 @@ export default function Hero() {
   return (
     <section className="relative h-screen flex flex-col items-center justify-center pt-16 overflow-hidden isolate">
       {/* Background Layer 1: Dot Grid Pattern */}
-      <div className="absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px]" />
+      <div className="absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-size-[24px_24px]" />
       
       {/* Background Layer 2: Particle Background */}
       <div className="absolute inset-0 -z-10 opacity-40">

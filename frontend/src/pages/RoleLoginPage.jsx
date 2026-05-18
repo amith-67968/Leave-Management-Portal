@@ -118,7 +118,7 @@ export default function RoleLoginPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center font-sans relative isolate p-4">
       {/* Background Pattern */}
-      <div className="absolute inset-0 -z-10 opacity-20 bg-[radial-gradient(var(--color-primary)_1px,transparent_1px)] [background-size:32px_32px]" />
+      <div className="absolute inset-0 -z-10 opacity-20 bg-[radial-gradient(var(--color-primary)_1px,transparent_1px)] bg-size-[32px_32px]" />
 
       {/* Header */}
       <header className="absolute top-0 left-0 w-full p-6 lg:p-8 flex justify-between items-center z-50">
