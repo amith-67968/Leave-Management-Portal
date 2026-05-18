@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { ArrowLeft, Mail, Lock, User, Users, ShieldCheck } from 'lucide-react';
-import { LiquidButton, MetalButton } from '../components/ui/liquid-glass-button';
 
 const ROLE_CONFIG = {
   employee: {
@@ -12,11 +11,11 @@ const ROLE_CONFIG = {
     description: 'Apply for leave, check balances & track status',
     color: 'from-blue-600 to-indigo-600',
     users: [
-      { name: 'Amit Kumar', email: 'amit.kumar@company.com', password: 'employee123' },
-      { name: 'Sneha Reddy', email: 'sneha.reddy@company.com', password: 'employee123' },
-      { name: 'Vikram Singh', email: 'vikram.singh@company.com', password: 'employee123' },
-      { name: 'Neha Gupta', email: 'neha.gupta@company.com', password: 'employee123' },
-      { name: 'Arjun Das', email: 'arjun.das@company.com', password: 'employee123' },
+      { name: 'Amit Kumar', email: 'amit.kumar@company.com' },
+      { name: 'Sneha Reddy', email: 'sneha.reddy@company.com' },
+      { name: 'Vikram Singh', email: 'vikram.singh@company.com' },
+      { name: 'Neha Gupta', email: 'neha.gupta@company.com' },
+      { name: 'Arjun Das', email: 'arjun.das@company.com' },
     ],
   },
   manager: {
@@ -25,8 +24,8 @@ const ROLE_CONFIG = {
     description: 'Approve/reject leaves & monitor team availability',
     color: 'from-emerald-600 to-teal-600',
     users: [
-      { name: 'Rahul Sharma', email: 'rahul.sharma@company.com', password: 'manager123' },
-      { name: 'Priya Patel', email: 'priya.patel@company.com', password: 'manager123' },
+      { name: 'Rahul Sharma', email: 'rahul.sharma@company.com' },
+      { name: 'Priya Patel', email: 'priya.patel@company.com' },
     ],
   },
   admin: {
@@ -35,7 +34,7 @@ const ROLE_CONFIG = {
     description: 'Manage users, policies, holidays & payroll reports',
     color: 'from-amber-600 to-orange-600',
     users: [
-      { name: 'System Admin', email: 'admin@company.com', password: 'admin123' },
+      { name: 'System Admin', email: 'admin@company.com' },
     ],
   },
 };
@@ -98,8 +97,6 @@ export default function RoleLoginPage() {
 
   if (!isValidRole) return null;
 
-  const selectedDemoUser = config.users.find((user) => user.email === email);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -116,7 +113,7 @@ export default function RoleLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center font-sans relative isolate p-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-start font-sans relative isolate px-4 pt-14 pb-6 sm:pt-16 lg:pt-12">
       {/* Background Pattern */}
       <div className="absolute inset-0 -z-10 opacity-20 bg-[radial-gradient(var(--color-primary)_1px,transparent_1px)] bg-size-[32px_32px]" />
 
@@ -135,16 +132,16 @@ export default function RoleLoginPage() {
       </header>
 
       {/* Login Card */}
-      <div className="w-full max-w-md mt-16">
+      <div className="w-full max-w-[480px]">
         {/* Role Badge */}
-        <div className="text-center mb-8">
-          <div className={`inline-flex p-4 rounded-2xl bg-primary/10 mb-4`}>
-            <Icon size={32} className="text-primary" />
+        <div className="text-center mb-6">
+          <div className={`inline-flex p-3.5 rounded-2xl bg-primary/10 mb-3`}>
+            <Icon size={30} className="text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl sm:text-[38px] font-extrabold tracking-tight leading-tight text-foreground mb-2">
             Sign in as {config.label}
           </h1>
-          <p className="text-muted-foreground text-sm">{config.description}</p>
+          <p className="text-muted-foreground text-sm sm:text-base">{config.description}</p>
         </div>
 
         {/* Error */}
@@ -155,16 +152,16 @@ export default function RoleLoginPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 shadow-lg space-y-5">
+        <form onSubmit={handleSubmit} className="min-h-[440px] sm:min-h-[470px] bg-card border border-border rounded-3xl p-7 py-8 sm:p-10 sm:py-11 shadow-lg flex flex-col gap-9">
           {/* Account Selector */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <div className="space-y-3">
+            <label className="text-base sm:text-[17px] font-semibold text-foreground flex items-center gap-2">
               <Mail size={14} /> Select Account
             </label>
             <select
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              className="w-full h-[52px] px-5 rounded-xl bg-background border border-border text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
             >
               {accounts.map((u) => (
                 <option key={u.email} value={u.email}>
@@ -178,8 +175,8 @@ export default function RoleLoginPage() {
           </div>
 
           {/* Password */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <div className="space-y-3">
+            <label className="text-base sm:text-[17px] font-semibold text-foreground flex items-center gap-2">
               <Lock size={14} /> Password
             </label>
             <input
@@ -189,36 +186,22 @@ export default function RoleLoginPage() {
               placeholder="Enter password"
               required
               autoFocus
-              className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              className="w-full h-[52px] px-5 rounded-xl bg-background border border-border text-foreground text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
             />
           </div>
 
           {/* Submit */}
-          <MetalButton
-            variant="primary"
-            type="submit"
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? 'Signing in...' : `Sign In as ${config.label}`}
-          </MetalButton>
+          <div className="mt-auto pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[52px] rounded-2xl bg-[#C79B73] text-[#3F2818] text-base font-semibold tracking-wide shadow-sm transition-colors hover:bg-[#B9865E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C79B73]/40 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? 'Signing in...' : `Sign In as ${config.label}`}
+            </button>
+          </div>
         </form>
 
-        {/* Password Hint */}
-        <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border text-center">
-          <span className="text-xs text-muted-foreground">
-            {selectedDemoUser ? (
-              <>
-                Demo password:{' '}
-                <code className="px-2 py-0.5 rounded bg-primary/10 text-primary font-mono text-xs font-bold">
-                  {selectedDemoUser.password}
-                </code>
-              </>
-            ) : (
-              'Use the password set for this account.'
-            )}
-          </span>
-        </div>
       </div>
     </div>
   );

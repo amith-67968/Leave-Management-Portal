@@ -163,11 +163,11 @@ const colorVariants = {
     textShadow: "[text-shadow:_0_-1px_0_rgb(80_80_80_/_100%)]",
   },
   primary: {
-    outer: "bg-gradient-to-b from-[#000] to-[#A0A0A0]",
-    inner: "bg-gradient-to-b from-primary via-secondary to-muted",
-    button: "bg-gradient-to-b from-primary to-primary/40",
-    textColor: "text-white",
-    textShadow: "[text-shadow:_0_-1px_0_rgb(30_58_138_/_100%)]",
+    outer: "bg-gradient-to-b from-[#A9774F] to-[#E8D5C3]",
+    inner: "bg-gradient-to-b from-[#FFF8F2] via-[#D8B08A] to-[#F4E7DB]",
+    button: "bg-gradient-to-b from-[#D9B28C] via-[#C79B73] to-[#B9865E]",
+    textColor: "text-[#3F2818]",
+    textShadow: "[text-shadow:_0_1px_0_rgb(255_244_235_/_70%)]",
   },
   success: {
     outer: "bg-gradient-to-b from-[#005A43] to-[#7CCB9B]",
@@ -210,7 +210,7 @@ const metalButtonVariants = (
  
   return {
     wrapper: cn(
-      "relative inline-flex transform-gpu rounded-md p-[1.25px] will-change-transform",
+      "relative inline-flex transform-gpu rounded-xl p-[1.25px] will-change-transform",
       colors.outer,
     ),
     wrapperStyle: {
@@ -226,7 +226,7 @@ const metalButtonVariants = (
       transformOrigin: "center center",
     },
     inner: cn(
-      "absolute inset-[1px] transform-gpu rounded-lg will-change-transform",
+      "absolute inset-[1px] transform-gpu rounded-[11px] will-change-transform",
       colors.inner,
     ),
     innerStyle: {
@@ -236,7 +236,7 @@ const metalButtonVariants = (
         isHovered && !isPressed && !isTouchDevice ? "brightness(1.05)" : "none",
     },
     button: cn(
-      "relative z-10 m-[1px] rounded-md inline-flex h-11 transform-gpu cursor-pointer items-center justify-center overflow-hidden rounded-md px-6 py-2 text-sm leading-none font-semibold will-change-transform outline-none",
+      "relative z-10 m-[1px] inline-flex h-11 transform-gpu cursor-pointer items-center justify-center overflow-hidden rounded-[10px] px-6 py-2 text-sm leading-none font-semibold tracking-wide will-change-transform outline-none",
       colors.button,
       colors.textColor,
       colors.textShadow,
@@ -264,7 +264,7 @@ const ShineEffect = ({ isPressed }) => {
   );
 };
 
-export const MetalButton = React.forwardRef(({ children, className, variant = "default", ...props }, ref) => {
+export const MetalButton = React.forwardRef(({ children, className, wrapperClassName, variant = "default", ...props }, ref) => {
   const [isPressed, setIsPressed] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const [isTouchDevice, setIsTouchDevice] = React.useState(false);
@@ -307,7 +307,7 @@ export const MetalButton = React.forwardRef(({ children, className, variant = "d
   };
  
   return (
-    <div className={variants.wrapper} style={variants.wrapperStyle}>
+    <div className={cn(variants.wrapper, wrapperClassName)} style={variants.wrapperStyle}>
       <div className={variants.inner} style={variants.innerStyle}></div>
       <button
         ref={ref}
