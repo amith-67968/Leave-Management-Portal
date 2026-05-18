@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { login, getProfile } = require('../controllers/auth.controller');
+const { login, getProfile, getLoginAccounts } = require('../controllers/auth.controller');
 const authenticate = require('../middleware/auth');
 
 /**
@@ -24,6 +24,8 @@ const authenticate = require('../middleware/auth');
  *       401: { description: Invalid credentials }
  */
 router.post('/login', login);
+
+router.get('/accounts/:role', getLoginAccounts);
 
 /**
  * @swagger

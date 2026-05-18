@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import { ArrowLeft, Mail, Lock, User, Users, ShieldCheck } from 'lucide-react';
 import { LiquidButton, MetalButton } from '../components/ui/liquid-glass-button';
 
@@ -47,19 +48,57 @@ export default function RoleLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(false);
 
-  const config = ROLE_CONFIG[role];
-  if (!config) {
-    navigate('/login');
-    return null;
-  }
+  const isValidRole = Boolean(ROLE_CONFIG[role]);
+  const config = ROLE_CONFIG[role] || ROLE_CONFIG.employee;
 
   const Icon = config.icon;
 
-  // Pre-fill first user on initial load
-  if (!email && config.users.length > 0) {
-    setEmail(config.users[0].email);
-  }
+  useEffect(() => {
+    if (!isValidRole) navigate('/login');
+  }, [isValidRole, navigate]);
+
+  useEffect(() => {
+    if (!isValidRole) return undefined;
+
+    let cancelled = false;
+    const fallbackUsers = config.users;
+
+    setAccounts(fallbackUsers);
+    setEmail(fallbackUsers[0]?.email || '');
+    setAccountsLoading(true);
+
+    api.get(`/auth/accounts/${role}`)
+      .then((res) => {
+        if (cancelled) return;
+
+        const users = res.data.users?.length ? res.data.users : fallbackUsers;
+        setAccounts(users);
+        setEmail((currentEmail) => (
+          users.some((user) => user.email === currentEmail)
+            ? currentEmail
+            : users[0]?.email || ''
+        ));
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error('Failed to load login accounts:', err);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setAccountsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [role, config, isValidRole]);
+
+  if (!isValidRole) return null;
+
+  const selectedDemoUser = config.users.find((user) => user.email === email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,12 +166,15 @@ export default function RoleLoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
             >
-              {config.users.map((u) => (
+              {accounts.map((u) => (
                 <option key={u.email} value={u.email}>
                   {u.name} ({u.email})
                 </option>
               ))}
             </select>
+            {accountsLoading && (
+              <p className="text-xs text-muted-foreground">Refreshing accounts...</p>
+            )}
           </div>
 
           {/* Password */}
@@ -165,10 +207,16 @@ export default function RoleLoginPage() {
         {/* Password Hint */}
         <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border text-center">
           <span className="text-xs text-muted-foreground">
-            Demo password:{' '}
-            <code className="px-2 py-0.5 rounded bg-primary/10 text-primary font-mono text-xs font-bold">
-              {config.users[0].password}
-            </code>
+            {selectedDemoUser ? (
+              <>
+                Demo password:{' '}
+                <code className="px-2 py-0.5 rounded bg-primary/10 text-primary font-mono text-xs font-bold">
+                  {selectedDemoUser.password}
+                </code>
+              </>
+            ) : (
+              'Use the password set for this account.'
+            )}
           </span>
         </div>
       </div>
