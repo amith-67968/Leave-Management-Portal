@@ -121,7 +121,7 @@ export default function RoleLoginPage() {
       <div className="absolute inset-0 -z-10 opacity-20 bg-[radial-gradient(var(--color-primary)_1px,transparent_1px)] [background-size:32px_32px]" />
 
       {/* Header */}
-      <header className="absolute top-0 w-full p-6 flex justify-between items-center max-w-7xl mx-auto left-0 right-0 z-50">
+      <header className="absolute top-0 left-0 w-full p-6 lg:p-8 flex justify-between items-center z-50">
         <div className="flex items-center gap-3">
           <div className="p-1.5 rounded-md bg-primary flex items-center justify-center">
             <ShieldCheck size={20} className="text-primary-foreground" />
