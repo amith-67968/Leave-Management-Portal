@@ -10,76 +10,67 @@ export default function MyLeaves() {
   const fetchLeaves = () => {
     setLoading(true);
     const params = filter !== 'all' ? `?status=${filter}` : '';
-    api.get(`/leaves/my${params}`)
-      .then(r => setLeaves(r.data.leaves || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    api.get(`/leaves/my${params}`).then(r => setLeaves(r.data.leaves || [])).catch(console.error).finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchLeaves(); }, [filter]);
 
   const handleCancel = async (id) => {
-    if (!confirm('Are you sure you want to cancel this leave?')) return;
-    try {
-      await api.delete(`/leaves/${id}`);
-      toast.success('Leave cancelled');
-      fetchLeaves();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to cancel');
-    }
+    if (!confirm('Cancel this leave?')) return;
+    try { await api.delete(`/leaves/${id}`); toast.success('Leave cancelled'); fetchLeaves(); }
+    catch (err) { toast.error(err.response?.data?.error || 'Failed'); }
   };
 
   const formatDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-emerald-100 text-emerald-800', rejected: 'bg-red-100 text-red-800', cancelled: 'bg-gray-100 text-gray-600' };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1>My Leaves</h1>
-        <p>Track all your leave requests and their status</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">My Leaves</h1>
+        <p className="text-muted-foreground mt-1">Track all your leave requests</p>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+      <div className="flex gap-2 flex-wrap">
         {['all', 'pending', 'approved', 'rejected', 'cancelled'].map(s => (
-          <button key={s} className={`btn btn-sm ${filter === s ? 'btn-primary' : 'btn-ghost'}`}
-            onClick={() => setFilter(s)} style={{ textTransform: 'capitalize' }}>{s}</button>
+          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition-colors ${filter === s ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}>{s}</button>
         ))}
       </div>
 
-      {loading ? <p>Loading...</p> : leaves.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
-          <h3>No leaves found</h3>
-          <p>You haven't applied for any leaves yet.</p>
-        </div>
+      {loading ? <p className="text-muted-foreground">Loading...</p> : leaves.length === 0 ? (
+        <div className="text-center py-16"><span className="text-5xl mb-4 block">📋</span><h3 className="text-lg font-semibold text-foreground">No leaves found</h3></div>
       ) : (
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Remark</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaves.map(l => (
-                <tr key={l.id}>
-                  <td style={{ fontWeight: 600 }}>{l.leave_type_name}</td>
-                  <td>{formatDate(l.from_date)}</td>
-                  <td>{formatDate(l.to_date)}</td>
-                  <td>{l.total_days}</td>
-                  <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.reason}</td>
-                  <td><span className={`badge ${l.status}`}>{l.status}</span></td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {l.decision_remark || '—'}
-                  </td>
-                  <td>
-                    {(l.status === 'pending' || l.status === 'approved') && (
-                      <button className="btn btn-danger btn-sm" onClick={() => handleCancel(l.id)}>Cancel</button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-border bg-muted/50">
+                <th className="text-left p-4 font-semibold text-muted-foreground">Type</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">From</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">To</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">Days</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">Status</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">Remark</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">Actions</th>
+              </tr></thead>
+              <tbody>
+                {leaves.map(l => (
+                  <tr key={l.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                    <td className="p-4 font-semibold text-foreground">{l.leave_type_name}</td>
+                    <td className="p-4 text-muted-foreground">{formatDate(l.from_date)}</td>
+                    <td className="p-4 text-muted-foreground">{formatDate(l.to_date)}</td>
+                    <td className="p-4 font-bold text-foreground">{l.total_days}</td>
+                    <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[l.status] || ''}`}>{l.status}</span></td>
+                    <td className="p-4 text-muted-foreground text-xs max-w-[150px] truncate">{l.decision_remark || '—'}</td>
+                    <td className="p-4">
+                      {(l.status === 'pending' || l.status === 'approved') && (
+                        <button onClick={() => handleCancel(l.id)} className="px-3 py-1 text-xs font-semibold text-destructive bg-destructive/10 rounded-lg hover:bg-destructive/20 transition-colors">Cancel</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
