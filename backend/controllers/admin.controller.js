@@ -117,7 +117,7 @@ const updateUser = async (req, res) => {
 const getPayroll = async (req, res) => {
   try {
     const { month, year } = req.query;
-    let query = `SELECT pl.*, u.name, u.email, u.monthly_salary FROM payroll_logs pl
+    let query = `SELECT pl.*, u.name as employee_name, u.email as employee_email, u.monthly_salary FROM payroll_logs pl
                  JOIN users u ON pl.user_id = u.id WHERE 1=1`;
     const params = [];
     if (year) { params.push(year); query += ` AND pl.year = $${params.length}`; }
