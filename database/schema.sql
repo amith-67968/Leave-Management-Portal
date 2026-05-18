@@ -85,6 +85,7 @@ CREATE TABLE leaves (
     from_date       DATE NOT NULL,
     to_date         DATE NOT NULL,
     total_days      NUMERIC(5, 1) NOT NULL,
+    day_part        VARCHAR(20) NOT NULL DEFAULT 'full',
     reason          TEXT NOT NULL,
     status          leave_status NOT NULL DEFAULT 'pending',
     applied_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -93,6 +94,7 @@ CREATE TABLE leaves (
     decision_remark TEXT,
 
     CONSTRAINT chk_date_range CHECK (to_date >= from_date),
+    CONSTRAINT chk_leave_day_part CHECK (day_part IN ('full', 'first_half', 'second_half')),
     CONSTRAINT chk_total_days CHECK (total_days > 0)
 );
 
@@ -115,6 +117,27 @@ CREATE TABLE holidays (
 
 CREATE INDEX idx_holidays_date ON holidays(date);
 CREATE INDEX idx_holidays_year ON holidays(EXTRACT(YEAR FROM date));
+
+-- ============================================
+-- HOLIDAY WORK LOGS / COMP-OFF CREDITS (Bonus)
+-- ============================================
+
+CREATE TABLE holiday_work_logs (
+    id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id                 UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    holiday_id              UUID REFERENCES holidays(id) ON DELETE SET NULL,
+    work_date               DATE NOT NULL,
+    credited_leave_type_id  UUID REFERENCES leave_types(id) ON DELETE SET NULL,
+    credited_days           NUMERIC(5, 1) NOT NULL DEFAULT 1,
+    notes                   TEXT,
+    created_by              UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_holiday_work_credit UNIQUE (user_id, work_date)
+);
+
+CREATE INDEX idx_holiday_work_user ON holiday_work_logs(user_id);
+CREATE INDEX idx_holiday_work_date ON holiday_work_logs(work_date);
 
 -- ============================================
 -- PAYROLL LOGS TABLE (Bonus)

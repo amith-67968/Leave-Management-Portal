@@ -79,6 +79,8 @@ router.get('/salary-summary', authenticate, ctrl.getSalarySummary);
  */
 router.get('/team', authenticate, authorize('manager', 'admin'), ctrl.getTeamLeaves);
 
+router.get('/calendar', authenticate, ctrl.getLeaveCalendar);
+
 /**
  * @swagger
  * /api/leaves/{id}/approve:

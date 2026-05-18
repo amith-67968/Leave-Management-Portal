@@ -7,6 +7,8 @@ export default function ManageLeaveTypes() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', annual_quota: 0, carry_forward_max: 0, is_paid: true, description: '' });
+  const currentYear = new Date().getFullYear();
+  const [carryForward, setCarryForward] = useState({ from_year: currentYear, to_year: currentYear + 1 });
 
   const fetchTypes = () => { setLoading(true); api.get('/admin/leave-types').then(r => setTypes(r.data.leave_types || [])).catch(console.error).finally(() => setLoading(false)); };
   useEffect(() => { fetchTypes(); }, []);
@@ -15,6 +17,16 @@ export default function ManageLeaveTypes() {
     e.preventDefault();
     try { await api.post('/admin/leave-types', form); toast.success('Leave type created!'); setShowForm(false); setForm({ name: '', annual_quota: 0, carry_forward_max: 0, is_paid: true, description: '' }); fetchTypes(); }
     catch (err) { toast.error(err.response?.data?.error || 'Failed'); }
+  };
+
+  const handleCarryForward = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/admin/carry-forward', carryForward);
+      toast.success(res.data.message || 'Carry-forward processed');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to process carry-forward');
+    }
   };
 
   return (
@@ -38,6 +50,24 @@ export default function ManageLeaveTypes() {
           <button type="submit" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">Create Leave Type</button>
         </form>
       )}
+
+      <form onSubmit={handleCarryForward} className="bg-card border border-border rounded-xl p-6 max-w-2xl space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Year-End Carry Forward</h2>
+          <p className="text-sm text-muted-foreground">Move unused paid leave into the next year, capped by each leave type's carry-forward policy.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">From Year</label>
+            <input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={carryForward.from_year} onChange={e => setCarryForward({ ...carryForward, from_year: parseInt(e.target.value) })} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">To Year</label>
+            <input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={carryForward.to_year} onChange={e => setCarryForward({ ...carryForward, to_year: parseInt(e.target.value) })} />
+          </div>
+        </div>
+        <button type="submit" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">Process Carry Forward</button>
+      </form>
 
       {loading ? <p className="text-muted-foreground">Loading...</p> : (
         <div className="bg-card border border-border rounded-xl overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm">

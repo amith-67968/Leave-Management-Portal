@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
+const { ensureBonusSchema } = require('./utils/migrations');
 
 const authRoutes = require('./routes/auth.routes');
 const leaveRoutes = require('./routes/leave.routes');
@@ -71,5 +72,9 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📚 API Docs at http://localhost:${PORT}/api-docs`);
 });
+
+ensureBonusSchema()
+  .then(() => console.log('Bonus feature schema ready'))
+  .catch((err) => console.error('Bonus feature schema migration failed:', err.message));
 
 module.exports = app;

@@ -87,6 +87,19 @@ export default function DashboardSidebar() {
           <span className="text-lg"><HiOutlineCalendar /></span>
           Holiday Calendar
         </NavLink>
+        <NavLink
+          to="/leave-calendar"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-0.5 ${
+              isActive
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            }`
+          }
+        >
+          <span className="text-lg"><HiOutlineUserGroup /></span>
+          Leave Calendar
+        </NavLink>
       </nav>
     </aside>
   );

@@ -7,6 +7,7 @@ export default function ManageUsers() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'employee', manager_id: '', monthly_salary: '' });
+  const [holidayCredit, setHolidayCredit] = useState({ user_id: '', work_date: '', credited_days: 1, notes: '' });
 
   const fetchUsers = () => { setLoading(true); api.get('/admin/users').then(r => setUsers(r.data.users || [])).catch(console.error).finally(() => setLoading(false)); };
   useEffect(() => { fetchUsers(); }, []);
@@ -18,6 +19,18 @@ export default function ManageUsers() {
     e.preventDefault();
     try { await api.post('/admin/users', { ...form, monthly_salary: parseFloat(form.monthly_salary) || 0 }); toast.success('User created!'); setShowForm(false); setForm({ name: '', email: '', password: '', role: 'employee', manager_id: '', monthly_salary: '' }); fetchUsers(); }
     catch (err) { toast.error(err.response?.data?.error || 'Failed'); }
+  };
+
+  const handleHolidayCredit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/admin/holiday-work', holidayCredit);
+      toast.success('Compensatory off credited!');
+      setHolidayCredit({ user_id: '', work_date: '', credited_days: 1, notes: '' });
+      fetchUsers();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to credit comp-off');
+    }
   };
 
   const roleColors = { admin: 'bg-amber-100 text-amber-800', manager: 'bg-emerald-100 text-emerald-800', employee: 'bg-blue-100 text-blue-800' };
@@ -46,6 +59,38 @@ export default function ManageUsers() {
           <button type="submit" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">Create User</button>
         </form>
       )}
+
+      <form onSubmit={handleHolidayCredit} className="bg-card border border-border rounded-xl p-6 max-w-4xl space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Holiday Work Comp-Off</h2>
+          <p className="text-sm text-muted-foreground">Mark an employee as having worked on a company holiday; the system auto-credits compensatory off.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">Employee</label>
+            <select className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={holidayCredit.user_id} onChange={e => setHolidayCredit({ ...holidayCredit, user_id: e.target.value })} required>
+              <option value="">Select employee</option>
+              {users.filter(u => u.role !== 'admin').map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">Holiday Date</label>
+            <input type="date" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={holidayCredit.work_date} onChange={e => setHolidayCredit({ ...holidayCredit, work_date: e.target.value })} required />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">Credit</label>
+            <select className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={holidayCredit.credited_days} onChange={e => setHolidayCredit({ ...holidayCredit, credited_days: parseFloat(e.target.value) })}>
+              <option value={1}>1 day</option>
+              <option value={0.5}>0.5 day</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-foreground">Notes</label>
+            <input className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" placeholder="Optional" value={holidayCredit.notes} onChange={e => setHolidayCredit({ ...holidayCredit, notes: e.target.value })} />
+          </div>
+        </div>
+        <button type="submit" className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">Credit Comp-Off</button>
+      </form>
 
       {loading ? <p className="text-muted-foreground">Loading...</p> : (
         <div className="bg-card border border-border rounded-xl overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm">

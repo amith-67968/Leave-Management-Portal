@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 export default function ApplyLeave() {
   const [leaveTypes, setLeaveTypes] = useState([]);
-  const [form, setForm] = useState({ leave_type_id: '', from_date: '', to_date: '', reason: '' });
+  const [form, setForm] = useState({ leave_type_id: '', from_date: '', to_date: '', day_part: 'full', reason: '' });
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,11 +25,11 @@ export default function ApplyLeave() {
         const day = d.getDay();
         if (day !== 0 && day !== 6) days++;
       }
-      setPreview(days);
+      setPreview(form.day_part === 'full' ? days : 0.5);
     } else {
       setPreview(null);
     }
-  }, [form.from_date, form.to_date]);
+  }, [form.from_date, form.to_date, form.day_part]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +37,7 @@ export default function ApplyLeave() {
     try {
       await api.post('/leaves', form);
       toast.success('Leave request submitted!');
-      setForm({ leave_type_id: leaveTypes[0]?.id || '', from_date: '', to_date: '', reason: '' });
+      setForm({ leave_type_id: leaveTypes[0]?.id || '', from_date: '', to_date: '', day_part: 'full', reason: '' });
       setPreview(null);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to submit');
@@ -74,12 +74,35 @@ export default function ApplyLeave() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground">From Date</label>
-            <input type="date" className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" value={form.from_date} onChange={e => setForm({ ...form, from_date: e.target.value })} required />
+            <input type="date" className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" value={form.from_date} onChange={e => setForm({ ...form, from_date: e.target.value, to_date: form.day_part === 'full' ? form.to_date : e.target.value })} required />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground">To Date</label>
-            <input type="date" className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" value={form.to_date} onChange={e => setForm({ ...form, to_date: e.target.value })} min={form.from_date} required />
+            <input type="date" className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" value={form.to_date} onChange={e => setForm({ ...form, to_date: e.target.value })} min={form.from_date} disabled={form.day_part !== 'full'} required />
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground">Day Duration</label>
+          <select
+            className="w-full h-11 px-4 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={form.day_part}
+            onChange={e => {
+              const day_part = e.target.value;
+              setForm(current => ({
+                ...current,
+                day_part,
+                to_date: day_part === 'full' ? current.to_date : current.from_date,
+              }));
+            }}
+          >
+            <option value="full">Full day</option>
+            <option value="first_half">First half</option>
+            <option value="second_half">Second half</option>
+          </select>
+          {form.day_part !== 'full' && (
+            <p className="text-xs text-muted-foreground">Half-day leave is limited to one working date and deducts 0.5 day.</p>
+          )}
         </div>
 
         <div className="space-y-2">

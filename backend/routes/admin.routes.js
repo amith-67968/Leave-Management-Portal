@@ -83,4 +83,7 @@ router.get('/leaves', ctrl.getAllLeaves);
  */
 router.get('/stats', ctrl.getStats);
 
+router.post('/holiday-work', ctrl.creditHolidayWork);
+router.post('/carry-forward', ctrl.processCarryForward);
+
 module.exports = router;

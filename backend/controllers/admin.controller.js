@@ -1,6 +1,35 @@
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
+async function runCarryForward(client, fromYear, toYear) {
+  const result = await client.query(
+    `INSERT INTO leave_balances (user_id, leave_type_id, year, allocated, used, remaining, carried_forward)
+     SELECT lb.user_id,
+            lb.leave_type_id,
+            $2,
+            lt.annual_quota,
+            0,
+            lt.annual_quota + LEAST(GREATEST(lb.remaining, 0), lt.carry_forward_max),
+            LEAST(GREATEST(lb.remaining, 0), lt.carry_forward_max)
+     FROM leave_balances lb
+     JOIN leave_types lt ON lb.leave_type_id = lt.id
+     JOIN users u ON lb.user_id = u.id
+     WHERE lb.year = $1
+       AND lt.is_active = TRUE
+       AND lt.is_paid = TRUE
+       AND u.is_active = TRUE
+     ON CONFLICT (user_id, leave_type_id, year)
+     DO UPDATE SET allocated = EXCLUDED.allocated,
+                   carried_forward = EXCLUDED.carried_forward,
+                   remaining = EXCLUDED.remaining,
+                   updated_at = NOW()
+     RETURNING *`,
+    [fromYear, toYear]
+  );
+
+  return result.rows;
+}
+
 // GET /api/admin/leave-types
 const getLeaveTypes = async (req, res) => {
   try {
@@ -173,4 +202,103 @@ const getStats = async (req, res) => {
   }
 };
 
-module.exports = { getLeaveTypes, createLeaveType, updateLeaveType, getUsers, createUser, updateUser, getPayroll, getAllLeaves, getStats };
+// POST /api/admin/holiday-work - mark holiday work and auto-credit compensatory off
+const creditHolidayWork = async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const { user_id, work_date, credited_days = 1, notes = '' } = req.body;
+    if (!user_id || !work_date) {
+      return res.status(400).json({ error: 'user_id and work_date are required.' });
+    }
+
+    await client.query('BEGIN');
+
+    const holiday = await client.query('SELECT id, name FROM holidays WHERE date = $1', [work_date]);
+    if (holiday.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Selected date is not a company holiday.' });
+    }
+
+    const leaveType = await client.query(
+      `INSERT INTO leave_types (name, annual_quota, carry_forward_max, is_paid, description)
+       VALUES ('Compensatory Off', 0, 5, TRUE, 'Auto-credited when an employee works on a company holiday')
+       ON CONFLICT (name) DO UPDATE SET is_active = TRUE
+       RETURNING id`,
+    );
+
+    const leaveTypeId = leaveType.rows[0].id;
+    const year = new Date(work_date).getFullYear();
+    const days = Math.max(0.5, Math.min(parseFloat(credited_days) || 1, 1));
+
+    const credit = await client.query(
+      `INSERT INTO holiday_work_logs (user_id, holiday_id, work_date, credited_leave_type_id, credited_days, notes, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [user_id, holiday.rows[0].id, work_date, leaveTypeId, days, notes, req.user.id]
+    );
+
+    await client.query(
+      `INSERT INTO leave_balances (user_id, leave_type_id, year, allocated, used, remaining, carried_forward)
+       VALUES ($1, $2, $3, 0, 0, $4, $4)
+       ON CONFLICT (user_id, leave_type_id, year)
+       DO UPDATE SET carried_forward = leave_balances.carried_forward + $4,
+                     remaining = leave_balances.remaining + $4,
+                     updated_at = NOW()`,
+      [user_id, leaveTypeId, year, days]
+    );
+
+    await client.query('COMMIT');
+    res.status(201).json({
+      message: `${days} compensatory off day(s) credited for holiday work.`,
+      credit: credit.rows[0],
+    });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'Comp-off has already been credited for this user and holiday.' });
+    }
+    console.error('Credit holiday work error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  } finally {
+    client.release();
+  }
+};
+
+// POST /api/admin/carry-forward - process year-end carry-forward
+const processCarryForward = async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const fromYear = parseInt(req.body.from_year || new Date().getFullYear(), 10);
+    const toYear = parseInt(req.body.to_year || fromYear + 1, 10);
+
+    await client.query('BEGIN');
+    const rows = await runCarryForward(client, fromYear, toYear);
+    await client.query('COMMIT');
+
+    res.json({
+      message: `Carry-forward processed from ${fromYear} to ${toYear}.`,
+      balances_created_or_updated: rows.length,
+    });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Carry-forward error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  } finally {
+    client.release();
+  }
+};
+
+module.exports = {
+  getLeaveTypes,
+  createLeaveType,
+  updateLeaveType,
+  getUsers,
+  createUser,
+  updateUser,
+  getPayroll,
+  getAllLeaves,
+  getStats,
+  creditHolidayWork,
+  processCarryForward,
+  runCarryForward,
+};

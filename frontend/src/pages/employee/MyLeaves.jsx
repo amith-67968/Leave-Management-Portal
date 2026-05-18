@@ -23,6 +23,7 @@ export default function MyLeaves() {
 
   const formatDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-emerald-100 text-emerald-800', rejected: 'bg-red-100 text-red-800', cancelled: 'bg-gray-100 text-gray-600' };
+  const dayPartLabel = { full: 'Full day', first_half: 'First half', second_half: 'Second half' };
 
   return (
     <div className="space-y-6">
@@ -48,6 +49,7 @@ export default function MyLeaves() {
                 <th className="text-left p-4 font-semibold text-muted-foreground">From</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">To</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Days</th>
+                <th className="text-left p-4 font-semibold text-muted-foreground">Duration</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Status</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Remark</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Actions</th>
@@ -59,6 +61,7 @@ export default function MyLeaves() {
                     <td className="p-4 text-muted-foreground">{formatDate(l.from_date)}</td>
                     <td className="p-4 text-muted-foreground">{formatDate(l.to_date)}</td>
                     <td className="p-4 font-bold text-foreground">{l.total_days}</td>
+                    <td className="p-4 text-muted-foreground">{dayPartLabel[l.day_part] || 'Full day'}</td>
                     <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[l.status] || ''}`}>{l.status}</span></td>
                     <td className="p-4 text-muted-foreground text-xs max-w-[150px] truncate">{l.decision_remark || '—'}</td>
                     <td className="p-4">

@@ -35,6 +35,7 @@ import PayrollReport from './pages/admin/PayrollReport';
 
 // Shared pages
 import HolidayCalendar from './pages/HolidayCalendar';
+import LeaveCalendar from './pages/LeaveCalendar';
 
 import './index.css';
 
@@ -110,6 +111,7 @@ export default function App() {
 
           {/* Shared routes */}
           <Route path="/holidays" element={<ProtectedRoute roles={['employee','manager','admin']}><DashboardLayout><HolidayCalendar /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/leave-calendar" element={<ProtectedRoute roles={['employee','manager','admin']}><DashboardLayout><LeaveCalendar /></DashboardLayout></ProtectedRoute>} />
 
           {/* Authenticated home redirect */}
           <Route path="/dashboard" element={<RoleRedirect />} />

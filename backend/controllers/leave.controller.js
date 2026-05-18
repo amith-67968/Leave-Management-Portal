@@ -3,25 +3,40 @@ const { calculateWorkingDays } = require('../utils/dateUtils');
 const { BadRequestError, NotFoundError, ForbiddenError, ConflictError } = require('../utils/errors');
 const { sendLeaveAppliedEmail, sendLeaveApprovedEmail, sendLeaveRejectedEmail, sendLeaveCancelledEmail } = require('../services/mail.service');
 
+const VALID_DAY_PARTS = new Set(['full', 'first_half', 'second_half']);
+
 // POST /api/leaves — Apply for leave
 const applyLeave = async (req, res) => {
   const client = await pool.connect();
   try {
     const { leave_type_id, from_date, to_date, reason } = req.body;
+    const dayPart = req.body.day_part || 'full';
     const userId = req.user.id;
 
     if (!leave_type_id || !from_date || !to_date || !reason) {
       return res.status(400).json({ error: 'leave_type_id, from_date, to_date, and reason are required.' });
     }
 
+    if (!VALID_DAY_PARTS.has(dayPart)) {
+      return res.status(400).json({ error: 'day_part must be full, first_half, or second_half.' });
+    }
+
     if (new Date(to_date) < new Date(from_date)) {
       return res.status(400).json({ error: 'to_date must be on or after from_date.' });
     }
 
+    if (dayPart !== 'full' && from_date !== to_date) {
+      return res.status(400).json({ error: 'Half-day leave must start and end on the same date.' });
+    }
+
     // Calculate working days (excludes weekends and holidays)
-    const totalDays = await calculateWorkingDays(from_date, to_date);
+    let totalDays = await calculateWorkingDays(from_date, to_date);
     if (totalDays <= 0) {
       return res.status(400).json({ error: 'No working days in the selected range (all weekends/holidays).' });
+    }
+
+    if (dayPart !== 'full') {
+      totalDays = 0.5;
     }
 
     await client.query('BEGIN');
@@ -47,10 +62,10 @@ const applyLeave = async (req, res) => {
 
     // Insert the leave request
     const result = await client.query(
-      `INSERT INTO leaves (user_id, leave_type_id, from_date, to_date, total_days, reason, status)
-       VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+      `INSERT INTO leaves (user_id, leave_type_id, from_date, to_date, total_days, reason, status, day_part)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7)
        RETURNING *`,
-      [userId, leave_type_id, from_date, to_date, totalDays, reason]
+      [userId, leave_type_id, from_date, to_date, totalDays, reason, dayPart]
     );
 
     await client.query('COMMIT');
@@ -152,6 +167,47 @@ const getTeamLeaves = async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
+
+
+// GET /api/leaves/calendar - approved/pending leave calendar for planning
+const getLeaveCalendar = async (req, res) => {
+  try {
+    const start = req.query.start || `${new Date().getFullYear()}-01-01`;
+    const end = req.query.end || `${new Date().getFullYear()}-12-31`;
+    const params = [start, end];
+    let scopeClause = '';
+
+    if (req.user.role === 'manager') {
+      params.push(req.user.id);
+      scopeClause = `AND (u.manager_id = $${params.length} OR u.id = $${params.length})`;
+    } else if (req.user.role === 'employee') {
+      const me = await pool.query('SELECT manager_id FROM users WHERE id = $1', [req.user.id]);
+      params.push(me.rows[0]?.manager_id || null, req.user.id);
+      scopeClause = `AND (u.manager_id = $${params.length - 1} OR u.id = $${params.length})`;
+    }
+
+    const result = await pool.query(
+      `SELECT l.id, l.user_id, u.name as employee_name, u.role as employee_role,
+              l.from_date, l.to_date, l.total_days, l.status, l.day_part,
+              lt.name as leave_type_name
+       FROM leaves l
+       JOIN users u ON l.user_id = u.id
+       JOIN leave_types lt ON l.leave_type_id = lt.id
+       WHERE l.status IN ('pending', 'approved')
+         AND l.from_date <= $2
+         AND l.to_date >= $1
+         ${scopeClause}
+       ORDER BY l.from_date, u.name`,
+      params
+    );
+
+    res.json({ leaves: result.rows });
+  } catch (error) {
+    console.error('Get leave calendar error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
 
 // PATCH /api/leaves/:id/approve — Approve a leave
 const approveLeave = async (req, res) => {
@@ -464,9 +520,12 @@ module.exports = {
   applyLeave,
   getMyLeaves,
   getTeamLeaves,
+  getLeaveCalendar,
   approveLeave,
   rejectLeave,
   cancelLeave,
   getMyBalance,
   getSalarySummary,
 };
+
+
