@@ -36,7 +36,7 @@ export default function TeamLeaves() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Team Leaves</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Team Leaves</h1>
         <p className="text-muted-foreground mt-1">Review and manage your team's leave requests</p>
       </div>
 
@@ -51,7 +51,7 @@ export default function TeamLeaves() {
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="min-w-[920px] w-full text-sm">
               <thead><tr className="border-b border-border bg-muted/50">
                 <th className="text-left p-4 font-semibold text-muted-foreground">Employee</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Type</th>
@@ -97,7 +97,7 @@ export default function TeamLeaves() {
             <h3 className="text-lg font-bold text-foreground mb-2">Reject Leave</h3>
             <p className="text-sm text-muted-foreground mb-4">Please provide a reason for rejection (mandatory).</p>
             <textarea className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" rows={3} placeholder="Enter rejection reason..." value={remarkModal.remark} onChange={e => setRemarkModal({ ...remarkModal, remark: e.target.value })} autoFocus />
-            <div className="flex justify-end gap-3 mt-4">
+            <div className="flex flex-col-reverse gap-3 mt-4 sm:flex-row sm:justify-end">
               <button onClick={() => setRemarkModal({ open: false, leaveId: null, remark: '' })} className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Cancel</button>
               <button onClick={handleReject} className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg text-sm font-semibold hover:bg-destructive/90 transition-colors">Reject Leave</button>
             </div>

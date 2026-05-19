@@ -7,7 +7,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center pt-16 overflow-hidden isolate">
+    <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-10 overflow-hidden isolate">
       {/* Background Layer 1: Dot Grid Pattern */}
       <div className="absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-size-[24px_24px]" />
       
@@ -38,7 +38,7 @@ export default function Hero() {
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-[1.15] tracking-tight mb-10 max-w-3xl">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-primary leading-[1.15] tracking-tight mb-8 sm:mb-10 max-w-3xl">
           <DecryptedText
             text="Intelligent Leave Automation for Modern Teams."
             animateOn="view"
@@ -51,7 +51,7 @@ export default function Hero() {
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg sm:text-xl text-muted-foreground mb-12 leading-relaxed max-w-2xl text-center">
+        <p className="text-base sm:text-xl text-muted-foreground mb-10 sm:mb-12 leading-relaxed max-w-2xl text-center">
           A role-based workflow engine connecting employee leave requests, approval hierarchies, holiday calendars, and automated payroll deduction logic.
         </p>
 

@@ -18,7 +18,7 @@ export default function ManagerDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Manager Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Manager Dashboard</h1>
         <p className="text-muted-foreground mt-1">Team leave overview & pending approvals</p>
       </div>
 
@@ -42,12 +42,12 @@ export default function ManagerDashboard() {
           <h3 className="text-lg font-bold text-foreground mb-4">⚡ Requires Your Action</h3>
           <div className="space-y-3">
             {pending.slice(0, 5).map(l => (
-              <div key={l.id} className="flex items-center justify-between p-4 rounded-lg bg-amber-50 border border-amber-200">
+              <div key={l.id} className="flex flex-col gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h4 className="font-semibold text-foreground">{l.employee_name}</h4>
                   <p className="text-xs text-muted-foreground">{l.leave_type_name} · {l.total_days} day(s) · {new Date(l.from_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} – {new Date(l.to_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
                 </div>
-                <a href="/manager/team-leaves" className="px-4 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors">Review</a>
+                <a href="/manager/team-leaves" className="w-full px-4 py-1.5 text-center bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors sm:w-auto">Review</a>
               </div>
             ))}
           </div>

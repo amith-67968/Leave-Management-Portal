@@ -28,12 +28,12 @@ export default function EmployeeDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Employee Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Employee Dashboard</h1>
         <p className="text-muted-foreground mt-1">Manage your leaves and track balances</p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <div className="bg-card border border-border rounded-xl p-5 flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><HiOutlineClock /></div>
           <div><h3 className="text-2xl font-bold text-foreground">{stats.pending}</h3><p className="text-xs text-muted-foreground">Pending</p></div>

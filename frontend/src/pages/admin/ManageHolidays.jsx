@@ -17,9 +17,9 @@ export default function ManageHolidays() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div><h1 className="text-3xl font-bold text-foreground">Manage Holidays</h1><p className="text-muted-foreground mt-1">Company holidays for {new Date().getFullYear()}</p></div>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold">{showForm ? 'Close' : '+ Add Holiday'}</button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div><h1 className="text-2xl sm:text-3xl font-bold text-foreground">Manage Holidays</h1><p className="text-muted-foreground mt-1">Company holidays for {new Date().getFullYear()}</p></div>
+        <button onClick={() => setShowForm(!showForm)} className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold sm:w-auto">{showForm ? 'Close' : '+ Add Holiday'}</button>
       </div>
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 max-w-md space-y-4">
@@ -30,10 +30,10 @@ export default function ManageHolidays() {
         </form>
       )}
       {loading ? <p>Loading...</p> : (
-        <div className="bg-card border border-border rounded-xl overflow-hidden"><table className="w-full text-sm">
+        <div className="bg-card border border-border rounded-xl overflow-hidden"><div className="overflow-x-auto"><table className="min-w-[640px] w-full text-sm">
           <thead><tr className="border-b bg-muted/50"><th className="text-left p-4 font-semibold text-muted-foreground">Date</th><th className="text-left p-4 font-semibold text-muted-foreground">Day</th><th className="text-left p-4 font-semibold text-muted-foreground">Name</th><th className="text-left p-4 font-semibold text-muted-foreground">Type</th><th className="p-4">Actions</th></tr></thead>
           <tbody>{holidays.map(h => (<tr key={h.id} className="border-b last:border-0"><td className="p-4 font-semibold">{fmtDate(h.date)}</td><td className="p-4 text-muted-foreground">{new Date(h.date).toLocaleDateString('en',{weekday:'long'})}</td><td className="p-4">{h.name}</td><td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-bold ${h.is_optional?'bg-amber-100 text-amber-800':'bg-emerald-100 text-emerald-800'}`}>{h.is_optional?'Optional':'Mandatory'}</span></td><td className="p-4"><button onClick={()=>handleDelete(h.id)} className="px-3 py-1 text-xs text-destructive bg-destructive/10 rounded-lg">Delete</button></td></tr>))}</tbody>
-        </table></div>
+        </table></div></div>
       )}
     </div>
   );

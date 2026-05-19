@@ -17,7 +17,7 @@ function baseTemplate(title, bodyContent) {
         <!-- Header -->
         <tr>
           <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:28px 32px;text-align:center;">
-            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">🏖️ LeavePort</h1>
+            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">🏖️ LeaveFlow</h1>
             <p style="margin:4px 0 0;color:#c7d2fe;font-size:13px;">Leave Management Portal</p>
           </td>
         </tr>
@@ -38,7 +38,7 @@ function baseTemplate(title, bodyContent) {
         <tr>
           <td style="background:#f8fafc;padding:20px 32px;text-align:center;border-top:1px solid #e2e8f0;">
             <p style="margin:0;font-size:12px;color:#94a3b8;">
-              This is an automated notification from LeavePort.<br>
+              This is an automated notification from LeaveFlow.<br>
               Please do not reply to this email.
             </p>
           </td>
@@ -84,7 +84,7 @@ function getLeaveAppliedTemplate({ employeeName, managerName, leaveTypeName, fro
         ⚡ Action Required — Please Review
       </span>
     </div>
-    <p style="font-size:13px;color:#64748b;">Log in to your LeavePort dashboard to approve or reject this request.</p>
+    <p style="font-size:13px;color:#64748b;">Log in to your LeaveFlow dashboard to approve or reject this request.</p>
   `;
   return baseTemplate('📋 New Leave Request Submitted', body);
 }

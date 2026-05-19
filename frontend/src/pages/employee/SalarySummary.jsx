@@ -16,7 +16,7 @@ export default function SalarySummary() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Salary Summary</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Salary Summary</h1>
         <p className="text-muted-foreground mt-1">Track salary deductions due to Loss of Pay</p>
       </div>
 
@@ -29,7 +29,7 @@ export default function SalarySummary() {
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="min-w-[640px] w-full text-sm">
               <thead><tr className="border-b border-border bg-muted/50">
                 <th className="text-left p-4 font-semibold text-muted-foreground">Month</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">Salary</th>

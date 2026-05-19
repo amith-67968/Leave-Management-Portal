@@ -1,4 +1,4 @@
-# LeavePort — Leave Management Portal
+# LeaveFlow — Leave Management Portal
 
 A full-stack, role-based Leave Management Portal for managing leave requests, approvals, leave balances, holidays, and salary deduction workflows.
 
@@ -65,7 +65,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email
 SMTP_PASS=your_app_password
-SMTP_FROM=LeavePort <noreply@leaveport.com>
+SMTP_FROM=LeaveFlow <noreply@LeaveFlow.com>
 ```
 
 ### 3. Frontend Setup
@@ -192,7 +192,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email
 SMTP_PASS=your_app_password
-SMTP_FROM=LeavePort <noreply@leaveport.com>
+SMTP_FROM=LeaveFlow <noreply@LeaveFlow.com>
 ```
 
 ### Vercel Frontend

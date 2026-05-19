@@ -40,10 +40,10 @@ export function RoleShuffleCard({ role, position, handleShuffle }) {
         dragRef.current = 0;
       }}
       transition={{ duration: 0.35 }}
-      className={`absolute left-0 top-0 flex flex-col p-8 h-[420px] w-[320px] sm:w-[350px] bg-card rounded-2xl border-2 border-border shadow-2xl ${
+      className={`absolute left-0 top-0 flex h-[390px] w-[280px] flex-col rounded-2xl border-2 border-border bg-card p-6 shadow-2xl sm:h-[420px] sm:w-[350px] sm:p-8 ${
         isFront ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
       }`}
-      onClick={(e) => {
+      onClick={() => {
         // If not front card, clicking it shuffles to the front
         if (!isFront) {
           handleShuffle();
@@ -53,15 +53,15 @@ export function RoleShuffleCard({ role, position, handleShuffle }) {
       <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 text-primary pointer-events-none">
         <Icon size={28} />
       </div>
-      <h3 className="text-2xl font-bold text-foreground mb-3 pointer-events-none">{role.title}</h3>
-      <p className="text-muted-foreground leading-relaxed flex-1 mb-8 pointer-events-none">
+      <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 pointer-events-none">{role.title}</h3>
+      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed flex-1 mb-6 sm:mb-8 pointer-events-none">
         {role.description}
       </p>
       
       <div className="mt-auto relative z-10" onPointerDownCapture={(e) => e.stopPropagation()}>
         <LiquidButton 
           className={`w-full ${!isFront ? 'opacity-50 pointer-events-none' : ''}`}
-          onClick={(e) => {
+          onClick={() => {
             if (isFront) {
               navigate(role.href);
             }

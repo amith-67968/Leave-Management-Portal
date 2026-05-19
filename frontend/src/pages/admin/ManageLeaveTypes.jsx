@@ -31,18 +31,18 @@ export default function ManageLeaveTypes() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div><h1 className="text-3xl font-bold text-foreground tracking-tight">Leave Types</h1><p className="text-muted-foreground mt-1">Configure leave type policies and quotas</p></div>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">{showForm ? 'Close' : '+ Add Type'}</button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div><h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Leave Types</h1><p className="text-muted-foreground mt-1">Configure leave type policies and quotas</p></div>
+        <button onClick={() => setShowForm(!showForm)} className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors sm:w-auto">{showForm ? 'Close' : '+ Add Type'}</button>
       </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 max-w-2xl space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1"><label className="text-sm font-semibold text-foreground">Name</label><input className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required /></div>
             <div className="space-y-1"><label className="text-sm font-semibold text-foreground">Annual Quota</label><input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={form.annual_quota} onChange={e => setForm({ ...form, annual_quota: parseInt(e.target.value) })} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1"><label className="text-sm font-semibold text-foreground">Max Carry Forward</label><input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={form.carry_forward_max} onChange={e => setForm({ ...form, carry_forward_max: parseInt(e.target.value) })} /></div>
             <div className="space-y-1"><label className="text-sm font-semibold text-foreground">Is Paid?</label><select className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={form.is_paid} onChange={e => setForm({ ...form, is_paid: e.target.value === 'true' })}><option value="true">Yes - Paid</option><option value="false">No - Unpaid</option></select></div>
           </div>
@@ -56,7 +56,7 @@ export default function ManageLeaveTypes() {
           <h2 className="text-lg font-bold text-foreground">Year-End Carry Forward</h2>
           <p className="text-sm text-muted-foreground">Move unused paid leave into the next year, capped by each leave type's carry-forward policy.</p>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-sm font-semibold text-foreground">From Year</label>
             <input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={carryForward.from_year} onChange={e => setCarryForward({ ...carryForward, from_year: parseInt(e.target.value) })} />
@@ -66,11 +66,11 @@ export default function ManageLeaveTypes() {
             <input type="number" className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm" value={carryForward.to_year} onChange={e => setCarryForward({ ...carryForward, to_year: parseInt(e.target.value) })} />
           </div>
         </div>
-        <button type="submit" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">Process Carry Forward</button>
+        <button type="submit" className="w-full px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors sm:w-auto">Process Carry Forward</button>
       </form>
 
       {loading ? <p className="text-muted-foreground">Loading...</p> : (
-        <div className="bg-card border border-border rounded-xl overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm">
+        <div className="bg-card border border-border rounded-xl overflow-hidden"><div className="overflow-x-auto"><table className="min-w-[680px] w-full text-sm">
           <thead><tr className="border-b border-border bg-muted/50"><th className="text-left p-4 font-semibold text-muted-foreground">Name</th><th className="text-left p-4 font-semibold text-muted-foreground">Quota</th><th className="text-left p-4 font-semibold text-muted-foreground">Carry Forward</th><th className="text-left p-4 font-semibold text-muted-foreground">Paid</th><th className="text-left p-4 font-semibold text-muted-foreground">Description</th></tr></thead>
           <tbody>{types.map(t => (
             <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/30">

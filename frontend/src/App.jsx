@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardSidebar from './components/DashboardSidebar';
@@ -55,12 +56,14 @@ function LandingPage() {
 
 /* ─── Dashboard Layout (authenticated) ─── */
 function DashboardLayout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <DashboardNavbar />
-      <main className="ml-64 pt-16 min-h-screen">
-        <div className="p-6 lg:p-8">
+    <div className="min-h-screen bg-background overflow-x-hidden">
+      <DashboardSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <DashboardNavbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="pt-16 min-h-screen lg:ml-64">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>

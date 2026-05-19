@@ -12,7 +12,7 @@ export default function HolidayCalendar() {
   if (loading) return <p className="text-muted-foreground p-8">Loading...</p>;
   return (
     <div className="space-y-6">
-      <div><h1 className="text-3xl font-bold text-foreground">Holiday Calendar {new Date().getFullYear()}</h1><p className="text-muted-foreground mt-1">{holidays.length} holidays scheduled this year</p></div>
+      <div><h1 className="text-2xl sm:text-3xl font-bold text-foreground">Holiday Calendar {new Date().getFullYear()}</h1><p className="text-muted-foreground mt-1">{holidays.length} holidays scheduled this year</p></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {holidays.map(h => {
           const past = h.date < today;

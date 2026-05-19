@@ -28,7 +28,7 @@ export default function MyLeaves() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">My Leaves</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">My Leaves</h1>
         <p className="text-muted-foreground mt-1">Track all your leave requests</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function MyLeaves() {
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="min-w-[820px] w-full text-sm">
               <thead><tr className="border-b border-border bg-muted/50">
                 <th className="text-left p-4 font-semibold text-muted-foreground">Type</th>
                 <th className="text-left p-4 font-semibold text-muted-foreground">From</th>

@@ -29,23 +29,23 @@ export default function Features() {
   };
 
   return (
-    <section className="py-24 bg-background overflow-hidden relative isolate">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-16">
+    <section className="py-16 sm:py-24 bg-background overflow-hidden relative isolate">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-10 md:gap-16">
         
         {/* Left Side: Text / Context */}
         <div className="flex-1 space-y-6 z-10">
-          <h2 className="text-4xl font-bold text-foreground tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
             Trusted by Modern Teams
           </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
+          <p className="text-base sm:text-xl text-muted-foreground leading-relaxed">
             See what industry leaders are saying about how LeaveFlow has completely transformed their HR and payroll automation. 
             Drag the cards to shuffle through the testimonials.
           </p>
         </div>
 
         {/* Right Side: Interactive Cards */}
-        <div className="flex-1 h-[550px] w-full flex justify-center items-center relative z-10">
-          <div className="relative h-[450px] w-[350px]">
+        <div className="flex-1 h-[460px] sm:h-[550px] w-full flex justify-center items-center relative z-10">
+          <div className="relative h-[390px] w-[280px] sm:h-[450px] sm:w-[350px]">
             {testimonials.map((testimonial, index) => (
               <TestimonialCard
                 key={testimonial.id}

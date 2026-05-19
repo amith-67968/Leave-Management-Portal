@@ -49,7 +49,7 @@ export default function ApplyLeave() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Apply for Leave</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Apply for Leave</h1>
         <p className="text-muted-foreground mt-1">Submit a new leave request</p>
       </div>
 
@@ -110,7 +110,7 @@ export default function ApplyLeave() {
           <textarea className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" rows={3} placeholder="Describe your reason for leave..." value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} required />
         </div>
 
-        <button type="submit" disabled={loading} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50">
+        <button type="submit" disabled={loading} className="w-full px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 sm:w-auto">
           {loading ? 'Submitting...' : 'Submit Request'}
         </button>
       </form>

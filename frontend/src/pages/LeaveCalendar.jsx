@@ -83,18 +83,20 @@ export default function LeaveCalendar() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Leave Calendar</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Leave Calendar</h1>
           <p className="text-muted-foreground mt-1">See approved and pending leaves before planning yours.</p>
         </div>
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm"
+          className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground sm:w-auto"
         />
       </div>
 
       <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+        <div className="min-w-[680px]">
         <div className="grid grid-cols-7 border-b border-border bg-muted/50">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <div key={day} className="p-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -113,7 +115,7 @@ export default function LeaveCalendar() {
               const muted = date.getMonth() !== currentMonthNumber;
 
               return (
-                <div key={key} className={`min-h-32 border-r border-b border-border p-2 ${muted ? 'bg-muted/20 text-muted-foreground' : 'bg-card'}`}>
+                <div key={key} className={`min-h-28 border-r border-b border-border p-2 sm:min-h-32 ${muted ? 'bg-muted/20 text-muted-foreground' : 'bg-card'}`}>
                   <div className="text-xs font-bold mb-2">{date.getDate()}</div>
                   <div className="space-y-1">
                     {dayLeaves.slice(0, 3).map((leave) => (
@@ -131,6 +133,8 @@ export default function LeaveCalendar() {
             })}
           </div>
         )}
+        </div>
+        </div>
       </div>
     </div>
   );

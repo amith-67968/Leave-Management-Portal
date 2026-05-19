@@ -15,11 +15,11 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Admin Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Admin Dashboard</h1>
         <p className="text-muted-foreground mt-1">Organization-wide leave management overview</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <div className="bg-card border border-border rounded-xl p-5 flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><HiOutlineUsers /></div>
           <div><h3 className="text-2xl font-bold text-foreground">{stats?.total_users || 0}</h3><p className="text-xs text-muted-foreground">Total Users</p></div>

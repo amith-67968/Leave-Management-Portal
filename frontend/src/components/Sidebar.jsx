@@ -45,7 +45,7 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">🏖️</div>
-        <h2>LeavePort</h2>
+        <h2>LeaveFlow</h2>
       </div>
       <nav className="sidebar-nav">
         <div className="sidebar-section-title">{sectionTitle}</div>
